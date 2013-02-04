@@ -2,7 +2,8 @@
 
 A PHP library to interact with the GET methods of the Twitter API using single user sign-on OAuth authentication.
 
-## Example with HttpExchange and Resty components autoloaded with Composer.
+## Example
+HttpExchange and Resty components autoloaded with Composer.
 
 ```php
 <?php
