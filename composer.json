@@ -1,0 +1,29 @@
+{
+    "name": "johnshopkins/twitterhook",
+    "description": "A PHP library to interact with the GET methods of the Twitter API using single user sign-on OAuth authentication. Adapted from @abraham's twitteroauth.",
+    "keywords": ["twitter", "oauth", "twitter api", "twitter oauth"],
+    "homepage": "http://github.com/johnshopkins/twitterhook",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jason Rhodes",
+            "email": "jrhodes@jhu.edu",
+            "homepage": "http://notrobotic.com"
+        },
+        {
+            "name": "Jen Wachter",
+            "email": "jwachter@jhu.edu",
+            "homepage": "http://www.jenwachter.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "johnshopkins/http-exchange": "0.2.*",
+        "johnshopkins/cache-exchange": "0.1.*"
+    },
+    "autoload": {
+        "psr-0" : {
+            "TwitterHook" : "src/"
+        }
+    }
+}
