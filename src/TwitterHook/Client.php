@@ -35,7 +35,7 @@ class Client
 	public $format = 'json';
 	public $decode_json = false;
 
-	function __construct($client, $token, $httpEngine = null)
+	function __construct($client, $token, \HttpExchange\Interfaces\ClientInterface $httpEngine = null)
 	{
 		$this->clientCred = new OAuth\Consumer($client);
 		$this->tokenCred = new OAuth\Consumer($token);
@@ -81,7 +81,11 @@ class Client
 
 
 
-
+	/**
+	 * Make the request using HTTP
+	 * @param  string $url Request URL
+	 * @return array
+	 */
 	protected function httpCall($request)
 	{
 		$url = $request->httpUrl;
@@ -91,19 +95,17 @@ class Client
 		return $this->httpEngine->get($url, $params, array("Authorization" => $oAuthHeader))->getBody();
 	}
 
-
-
-
 	/**
-	 * Curl
+	 * Make the request using cURL
+	 * @param  string $url Request URL
+	 * @return array
 	 */
-
-	function curlCall($url)
+	protected function curlCall($url)
 	{
 		$this->decode_json = true;
 
 		$ci = curl_init();
-		
+
 		curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, 30);
 		curl_setopt($ci, CURLOPT_TIMEOUT, 30);
 		curl_setopt($ci, CURLOPT_RETURNTRANSFER, true);
