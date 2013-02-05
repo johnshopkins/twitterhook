@@ -33,25 +33,48 @@ class Client
 
 
 	public $format = 'json';
-	public $decode_json = false;
+	public $decodeJson = false;
 
-	function __construct($client, $token, \HttpExchange\Interfaces\ClientInterface $httpEngine = null)
+	public function __construct($client, $token, \HttpExchange\Interfaces\ClientInterface $httpEngine = null)
 	{
 		$this->clientCred = new OAuth\Consumer($client);
 		$this->tokenCred = new OAuth\Consumer($token);
 		$this->httpEngine = $httpEngine;
 	}
 
-	function get($url, $params = array())
+	public function get($url, $params = array())
 	{
+		$params = $this->cleanParams($params);
+
 		$response = $this->oAuthRequest($url, "GET", $params);
-		if ($this->format === "json" && $this->decode_json) {
+		
+		if ($this->format === "json" && $this->decodeJson) {
 			return json_decode($response);
 		}
 		return $response;
 	}
 
-	function oAuthRequest($url, $method, $params)
+	/**
+	 * Converts false values to 0. The false value causes the
+	 * signature not to be correct because it is an empty value,
+	 * but when it comes back from Twitter, it's a zero, so the
+	 * signatures do not match.
+	 * 
+	 * @param  array $params Request parameters
+	 * @return array Cleaned request parameters
+	 */
+	protected function cleanParams($params)
+	{
+		foreach ($params as $k => $v) {
+			if ($v === false) {
+				$params[$k] = 0;
+			}
+		}
+
+		return $params;
+	}
+
+	protected function oAuthRequest($url, $method, $params)
 	{
 		$url = $this->buildRequestUrl($url);
 
@@ -62,7 +85,7 @@ class Client
 		if ($this->httpEngine) {
 			return $this->httpCall($request);
 		} else {
-			return $this->curlCall($request->to_url());
+			return $this->curlCall($request);
 		}
 		
 	}
@@ -100,9 +123,12 @@ class Client
 	 * @param  string $url Request URL
 	 * @return array
 	 */
-	protected function curlCall($url)
+	protected function curlCall($request)
 	{
-		$this->decode_json = true;
+		$url = $request->compileUrlWithParams();
+		$oAuthHeader = $request->compileOAuthHeader();
+
+		$this->decodeJson = true;
 
 		$ci = curl_init();
 
@@ -112,6 +138,7 @@ class Client
 		curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ci, CURLOPT_HEADER, false);
 		curl_setopt($ci, CURLOPT_URL, $url);
+		curl_setopt($ci, CURLOPT_HTTPHEADER, array("Authorization: {$oAuthHeader}"));
 
 		$response = curl_exec($ci);
 		curl_close ($ci);
