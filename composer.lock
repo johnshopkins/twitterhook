@@ -1,0 +1,112 @@
+{
+    "hash": "df16c03c9171fe5ffbbd5737e87439bf",
+    "packages": [
+        {
+            "name": "johnshopkins/cache-exchange",
+            "version": "v0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/johnshopkins/cache-exchange",
+                "reference": "v0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/johnshopkins/cache-exchange/zipball/v0.1",
+                "reference": "v0.1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "time": "2013-02-01 16:25:12",
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "CacheExchange": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jason Rhodes",
+                    "email": "jrhodes@jhu.edu",
+                    "homepage": "http://notrobotic.com"
+                },
+                {
+                    "name": "Jen Wachter",
+                    "email": "jwachter@jhu.edu",
+                    "homepage": "http://www.jenwachter.com"
+                }
+            ],
+            "description": "A collection of PHP interfaces and adapters to make swapping out cache library dependencies quick and easy.",
+            "homepage": "http://github.com/johnshopkins/http-exchange",
+            "keywords": [
+                "cache",
+                "wrapper",
+                "interfaces",
+                "adapters"
+            ]
+        },
+        {
+            "name": "johnshopkins/http-exchange",
+            "version": "v0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/johnshopkins/http-exchange",
+                "reference": "v0.3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/johnshopkins/http-exchange/zipball/v0.3",
+                "reference": "v0.3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "time": "2013-02-05 20:14:36",
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "HttpExchange": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jason Rhodes",
+                    "email": "jrhodes@jhu.edu",
+                    "homepage": "http://notrobotic.com"
+                },
+                {
+                    "name": "Jen Wachter",
+                    "email": "jwachter@jhu.edu",
+                    "homepage": "http://www.jenwachter.com"
+                }
+            ],
+            "description": "A collection of PHP interfaces and adapters to make swapping out HTTP library dependencies quick and easy.",
+            "homepage": "http://github.com/johnshopkins/http-exchange",
+            "keywords": [
+                "http",
+                "api",
+                "wrapper",
+                "interfaces",
+                "adapters"
+            ]
+        }
+    ],
+    "packages-dev": null,
+    "aliases": [
+
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": [
+
+    ]
+}
