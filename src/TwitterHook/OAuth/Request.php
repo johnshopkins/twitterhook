@@ -14,7 +14,7 @@ class Request
 
 	public function __construct($clientCred, $tokenCred, $method, $url, $params = array())
 	{
-		$defaultParams = array(
+		$this->oAuthRequestHeader = array(
 			"oauth_version" => "1.0",
 			"oauth_nonce" => $this->createNonce(),
 			"oauth_timestamp" => time(),
@@ -22,9 +22,6 @@ class Request
 			"oauth_token" => $tokenCred->key
 		);
 
-		$this->oAuthRequestHeader = $defaultParams;
-
-		$params = array_merge($defaultParams, $params);
 		$params = array_merge(Utility::parse_params(parse_url($url, PHP_URL_QUERY)), $params);
 		
 		$this->requestParams = $params;
@@ -62,11 +59,8 @@ class Request
 
 	public function sign($consumer, $token)
 	{
-		$this->setParam("oauth_signature_method", "HMAC-SHA1");
 		$this->setOAuthHeader("oauth_signature_method", "HMAC-SHA1");
-
 		$signature = new \TwitterHook\OAuth\Signature($this, $consumer, $token);
-		$this->setParam("oauth_signature", $signature->get(), false);
 		$this->setOAuthHeader("oauth_signature", $signature->get(), false);
 	}
 
@@ -97,7 +91,6 @@ class Request
 		);
 
 		$parts = Utility::urlencode_rfc3986($parts);
-
 		return implode('&', $parts);
 	}
 
@@ -126,6 +119,12 @@ class Request
 			$compiled[] = "{$k}=\"{$v}\"";
 		}
 		return "OAuth " . implode(", ", $compiled);
+	}
+
+	public function compileUrlWithParams()
+	{
+		$params = Utility::build_http_query($this->requestParams);
+		return "{$this->httpUrl}?{$params}";
 	}
 
 	public function to_url()
