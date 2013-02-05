@@ -30,9 +30,16 @@ class Client
 	 */
 	protected $apiVersion = "1.1";
 
+	/**
+	 * Requested format of response
+	 * @var string
+	 */
+	public $format = "json";
 
-
-	public $format = 'json';
+	/**
+	 * [$decodeJson description]
+	 * @var boolean
+	 */
 	public $decodeJson = false;
 
 	public function __construct($client, $token, \HttpExchange\Interfaces\ClientInterface $httpEngine = null)
@@ -42,12 +49,18 @@ class Client
 		$this->httpEngine = $httpEngine;
 	}
 
+	/**
+	 * Makes a GET call to the passed URL
+	 * @param  string $url    API endpoint
+	 * @param  array  $params Request parameters (key => value)
+	 * @return response data
+	 */
 	public function get($url, $params = array())
 	{
 		$params = $this->cleanParams($params);
 
 		$response = $this->oAuthRequest($url, "GET", $params);
-		
+
 		if ($this->format === "json" && $this->decodeJson) {
 			return json_decode($response);
 		}
