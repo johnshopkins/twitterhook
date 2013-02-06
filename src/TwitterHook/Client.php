@@ -4,6 +4,12 @@ namespace TwitterHook;
 
 class Client
 {
+	/**
+	 * A compatible HTTP object that can make GET requests
+	 * by way of $http->get() and returns the results in a
+	 * response object
+	 * @var mixed: object or null
+	 */
 	protected $httpEngine = null;
 
 	/**
@@ -25,22 +31,10 @@ class Client
 	protected $apiBase = "https://api.twitter.com";
 
 	/**
-	 * Version of Twitter API to targets
+	 * Version of Twitter API to target
 	 * @var string
 	 */
 	protected $apiVersion = "1.1";
-
-	/**
-	 * Requested format of response
-	 * @var string
-	 */
-	public $format = "json";
-
-	/**
-	 * [$decodeJson description]
-	 * @var boolean
-	 */
-	public $decodeJson = false;
 
 	public function __construct($client, $token, \HttpExchange\Interfaces\ClientInterface $httpEngine = null)
 	{
@@ -58,13 +52,7 @@ class Client
 	public function get($url, $params = array())
 	{
 		$params = $this->cleanParams($params);
-
-		$response = $this->oAuthRequest($url, "GET", $params);
-
-		if ($this->format === "json" && $this->decodeJson) {
-			return json_decode($response);
-		}
-		return $response;
+		return $this->oAuthRequest($url, "GET", $params);
 	}
 
 	/**
@@ -112,7 +100,7 @@ class Client
 	protected function buildRequestUrl($url)
 	{
 		$endpoint = $this->getRequestEndpoint($url);
-		return "{$this->apiBase}/{$this->apiVersion}/{$endpoint}.{$this->format}";	
+		return "{$this->apiBase}/{$this->apiVersion}/{$endpoint}.json";	
 	}
 
 
@@ -156,7 +144,7 @@ class Client
 		$response = curl_exec($ci);
 		curl_close ($ci);
 
-		return $response;
+		return json_decode($response);
 	}
 
 }
