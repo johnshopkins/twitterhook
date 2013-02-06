@@ -12,13 +12,13 @@ class Request
 
 
 
-	public function __construct($clientCred, $tokenCred, $method, $url, $params = array())
+	public function __construct($consumerCred, $tokenCred, $method, $url, $params = array())
 	{
 		$this->oAuthRequestHeader = array(
 			"oauth_version" => "1.0",
 			"oauth_nonce" => $this->createNonce(),
 			"oauth_timestamp" => time(),
-			"oauth_consumer_key" => $clientCred->key,
+			"oauth_consumer_key" => $consumerCred->key,
 			"oauth_token" => $tokenCred->key
 		);
 
@@ -57,10 +57,10 @@ class Request
 	    return $return;
 	}
 
-	public function sign($consumer, $token)
+	public function sign($consumer, $accessToken)
 	{
 		$this->setOAuthHeader("oauth_signature_method", "HMAC-SHA1");
-		$signature = new \TwitterHook\OAuth\Signature($this, $consumer, $token);
+		$signature = new \TwitterHook\OAuth\Signature($this, $consumer, $accessToken);
 		$this->setOAuthHeader("oauth_signature", $signature->get(), false);
 	}
 

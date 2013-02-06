@@ -9,13 +9,13 @@ class Signature
 
 	protected $signature;
 
-	public function __construct($request, $consumer, $token)
+	public function __construct($request, $consumer, $accessToken)
 	{
 		$base = $request->getSignatureBaseString();
 
 		$keyParts = array(
 			$consumer->secret,
-			$token->secret
+			$accessToken->secret
 		);
 
 		$keyParts = Utility::urlencode_rfc3986($keyParts);

@@ -13,16 +13,16 @@ class Client
 	protected $httpEngine = null;
 
 	/**
-	 * Consumer object for client
+	 * Consumer object for consumer
 	 * @var object
 	 */
-	protected $clientCred;
+	protected $consumerCred;
 
 	/**
-	 * Consumer object for token
+	 * Consumer object for accessToken
 	 * @var object
 	 */
-	protected $tokenCred;
+	protected $accessTokenCred;
 
 	/**
 	 * Base URL of Twitter API
@@ -36,10 +36,20 @@ class Client
 	 */
 	protected $apiVersion = "1.1";
 
-	public function __construct($client, $token, \HttpExchange\Interfaces\ClientInterface $httpEngine = null)
+	/**
+	 * Constructor
+	 * @param array $consumer    	Consumer authentication. Array keys consist of:
+	 *                            	"key"    => consumer key
+	 *                            	"secret" => consumer secret
+	 * @param array $accessToken    Access token authentication. Array keys consist of:
+	 *                              "key"    => access token
+	 *                              "secret" => access token secret
+	 * @param [type] $httpEngine [description]
+	 */
+	public function __construct($consumer, $accessToken, \HttpExchange\Interfaces\ClientInterface $httpEngine = null)
 	{
-		$this->clientCred = new OAuth\Consumer($client);
-		$this->tokenCred = new OAuth\Consumer($token);
+		$this->consumerCred = new OAuth\Consumer($consumer);
+		$this->accessTokenCred = new OAuth\Consumer($accessToken);
 		$this->httpEngine = $httpEngine;
 	}
 
@@ -79,9 +89,9 @@ class Client
 	{
 		$url = $this->buildRequestUrl($url);
 
-		$request = new OAuth\Request($this->clientCred, $this->tokenCred, $method, $url, $params);
+		$request = new OAuth\Request($this->consumerCred, $this->accessTokenCred, $method, $url, $params);
 
-		$request->sign($this->clientCred, $this->tokenCred);
+		$request->sign($this->consumerCred, $this->accessTokenCred);
 
 		if ($this->httpEngine) {
 			return $this->httpCall($request);
