@@ -5,14 +5,6 @@ namespace TwitterHook;
 class Client
 {
 	/**
-	 * A compatible HTTP object that can make GET requests
-	 * by way of $http->get() and returns the results in a
-	 * response object
-	 * @var mixed: object or null
-	 */
-	protected $httpEngine = null;
-
-	/**
 	 * Consumer object for consumer
 	 * @var object
 	 */
@@ -23,6 +15,14 @@ class Client
 	 * @var object
 	 */
 	protected $accessToken;
+
+	/**
+	 * A compatible HTTP object that can make GET requests
+	 * by way of $http->get() and returns the results in a
+	 * response object
+	 * @var mixed: object or null
+	 */
+	protected $httpEngine = null;
 
 	/**
 	 * Base URL of Twitter API
@@ -36,13 +36,15 @@ class Client
 	 */
 	protected $apiVersion = "1.1";
 
+
 	/**
 	 * Constructor
+	 * 
 	 * @param array $consumer    	Consumer authentication. Array keys consist of:
 	 *                            	"key"    => consumer key
 	 *                            	"secret" => consumer secret
 	 * @param array $accessToken    Access token authentication. Array keys consist of:
-	 *                              "key"    => access token
+	 *                              "token"  => access token
 	 *                              "secret" => access token secret
 	 * @param [type] $httpEngine [description]
 	 */
@@ -55,6 +57,7 @@ class Client
 
 	/**
 	 * Makes a GET call to the passed URL
+	 * 
 	 * @param  string $url    API endpoint
 	 * @param  array  $params Request parameters (key => value)
 	 * @return response data
@@ -85,6 +88,14 @@ class Client
 		return $params;
 	}
 
+	/**
+	 * Initializes and makes the OAuth Request
+	 * 
+	 * @param  string $url    	API URL
+	 * @param  string $method 	HTTP method
+	 * @param  array  $params 	Request parameters
+	 * @return API response
+	 */
 	protected function oAuthRequest($url, $method, $params)
 	{
 		$url = $this->buildRequestUrl($url);
@@ -104,7 +115,7 @@ class Client
 	/**
 	 * Trim the URL to be only the endpoint.
 	 * 
-	 * @param  string $url API URL
+	 * @param  string $url API URL requested
 	 * @return string Endpoint
 	 */
 	protected function getRequestEndpoint($url)
@@ -114,16 +125,21 @@ class Client
 		return preg_replace("/\.[A-Za-z0-9]{3,4}$/", "", $path);
 	}
 
+	/**
+	 * Builds the full request URL
+	 * 
+	 * @param  string $url API URL requested
+	 * @return string Full API URL
+	 */
 	protected function buildRequestUrl($url)
 	{
 		$endpoint = $this->getRequestEndpoint($url);
 		return "{$this->apiBase}/{$this->apiVersion}/{$endpoint}.json";	
 	}
 
-
-
 	/**
 	 * Make the request using HTTP
+	 * 
 	 * @param  string $url Request URL
 	 * @return array
 	 */
@@ -138,6 +154,7 @@ class Client
 
 	/**
 	 * Make the request using cURL
+	 * 
 	 * @param  string $url Request URL
 	 * @return array
 	 */
@@ -163,5 +180,4 @@ class Client
 
 		return json_decode($response);
 	}
-
 }
