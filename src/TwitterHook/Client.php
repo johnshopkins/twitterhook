@@ -101,10 +101,17 @@ class Client
 		
 	}
 
+	/**
+	 * Trim the URL to be only the endpoint.
+	 * 
+	 * @param  string $url API URL
+	 * @return string Endpoint
+	 */
 	protected function getRequestEndpoint($url)
 	{
 		$urlParts = parse_url($url);
-		return trim($urlParts["path"], "/");
+		$path = trim($urlParts["path"], "/");
+		return preg_replace("/\.[A-Za-z0-9]{3,4}$/", "", $path);
 	}
 
 	protected function buildRequestUrl($url)
