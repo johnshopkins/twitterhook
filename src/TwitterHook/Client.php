@@ -22,7 +22,7 @@ class Client
 	 * Consumer object for accessToken
 	 * @var object
 	 */
-	protected $accessTokenCred;
+	protected $accessToken;
 
 	/**
 	 * Base URL of Twitter API
@@ -49,7 +49,7 @@ class Client
 	public function __construct($consumer, $accessToken, \HttpExchange\Interfaces\ClientInterface $httpEngine = null)
 	{
 		$this->consumerCred = new OAuth\Consumer($consumer);
-		$this->accessTokenCred = new OAuth\Consumer($accessToken);
+		$this->accessToken = new OAuth\Token($accessToken);
 		$this->httpEngine = $httpEngine;
 	}
 
@@ -89,9 +89,9 @@ class Client
 	{
 		$url = $this->buildRequestUrl($url);
 
-		$request = new OAuth\Request($this->consumerCred, $this->accessTokenCred, $method, $url, $params);
+		$request = new OAuth\Request($this->consumerCred, $this->accessToken, $method, $url, $params);
 
-		$request->sign($this->consumerCred, $this->accessTokenCred);
+		$request->sign($this->consumerCred, $this->accessToken);
 
 		if ($this->httpEngine) {
 			return $this->httpCall($request);

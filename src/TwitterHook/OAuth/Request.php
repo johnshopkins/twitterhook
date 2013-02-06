@@ -19,7 +19,7 @@ class Request
 			"oauth_nonce" => $this->createNonce(),
 			"oauth_timestamp" => time(),
 			"oauth_consumer_key" => $consumerCred->key,
-			"oauth_token" => $tokenCred->key
+			"oauth_token" => $tokenCred->token
 		);
 
 		$params = array_merge(Utility::parse_params(parse_url($url, PHP_URL_QUERY)), $params);

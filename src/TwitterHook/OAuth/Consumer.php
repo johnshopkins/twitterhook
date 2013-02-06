@@ -5,13 +5,13 @@ namespace TwitterHook\OAuth;
 class Consumer
 {
 	/**
-	 * Public key
+	 * Consumer key
 	 * @var string
 	 */
 	protected $key;
 
 	/**
-	 * Secret key
+	 * Consumer Secret
 	 * @var string
 	 */
 	protected $secret;
