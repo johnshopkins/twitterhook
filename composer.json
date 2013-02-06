@@ -17,9 +17,10 @@
         }
     ],
     "require": {
-        "php": ">=5.3.2",
-        "johnshopkins/http-exchange": "0.*",
-        "johnshopkins/cache-exchange": "0.*"
+        "php": ">=5.3.2"
+    },
+    "suggest": {
+        "johnshopkins/http-exchange": "0.*"
     },
     "autoload": {
         "psr-0" : {
