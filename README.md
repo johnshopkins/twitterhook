@@ -10,7 +10,7 @@ HttpExchange and Resty components autoloaded with Composer.
 
 include "path/to/vendor/autoload.php";
 
-$client = array(
+$consumer = array(
 	"key" =>"consumerkey",
 	"secret" => "consumersecret"
 );
@@ -23,7 +23,7 @@ $token = array(
 $httpEngine = new \HttpExchange\Adapters\Resty(new \Resty());
 
 // If an HTTP engine is not passed to Client, cURL is used
-$twitterHook = new \TwitterHook\Client($client, $token, $httpEngine);
+$twitterHook = new \TwitterHook\Client($consumer, $token, $httpEngine);
 
 $content = $twitterHook->get("statuses/home_timeline");
 
