@@ -69,6 +69,19 @@ class Client
 	}
 
 	/**
+	 * Makes a POST call to the passed URL
+	 *
+	 * @param  string $url    API endpoint
+	 * @param  array  $params Request parameters (key => value)
+	 * @return response data
+	 */
+	public function post($url, $params = array())
+	{
+		$params = $this->cleanParams($params);
+		return $this->oAuthRequest($url, "POST", $params);
+	}
+
+	/**
 	 * Converts false values to 0. The false value causes the
 	 * signature not to be correct because it is an empty value,
 	 * but when it comes back from Twitter, it's a zero, so the
@@ -149,7 +162,10 @@ class Client
 		$params = $request->requestParams;
 		$oAuthHeader = $request->compileOAuthHeader();
 
-		return $this->httpEngine->get($url, $params, array("Authorization" => $oAuthHeader))->getBody();
+		return call_user_func(array(
+			$this->httpEngine,
+			strtolower($request->httpMethod),
+		), $url, $params, array("Authorization" => $oAuthHeader))->getBody();
 	}
 
 	/**
@@ -160,7 +176,6 @@ class Client
 	 */
 	protected function curlCall($request)
 	{
-		$url = $request->compileUrlWithParams();
 		$oAuthHeader = $request->compileOAuthHeader();
 
 		$this->decodeJson = true;
@@ -172,8 +187,15 @@ class Client
 		curl_setopt($ci, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ci, CURLOPT_HEADER, false);
-		curl_setopt($ci, CURLOPT_URL, $url);
 		curl_setopt($ci, CURLOPT_HTTPHEADER, array("Authorization: {$oAuthHeader}"));
+
+		if ($request->httpMethod == 'POST') {
+			curl_setopt($ci, CURLOPT_URL, $request->httpUrl);
+			curl_setopt($ci, CURLOPT_POST, count($request->requestParams));
+			curl_setopt($ci, CURLOPT_POSTFIELDS, $request->to_postdata());
+		} else {
+			curl_setopt($ci, CURLOPT_URL, $request->compileUrlWithParams());
+		}
 
 		$response = curl_exec($ci);
 		curl_close ($ci);

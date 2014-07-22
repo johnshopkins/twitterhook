@@ -1,6 +1,6 @@
 # TwitterHook
 
-A PHP library to interact with the GET methods of the Twitter API using single user sign-on OAuth authentication.
+A PHP library to interact with the Twitter's REST API using single user sign-on OAuth authentication.
 
 ## Example
 HttpExchange and Resty components autoloaded with Composer.
@@ -26,5 +26,9 @@ $httpEngine = new \HttpExchange\Adapters\Resty(new \Resty());
 $twitterHook = new \TwitterHook\Client($consumer, $token, $httpEngine);
 
 $content = $twitterHook->get("statuses/home_timeline");
+
+$tweet = $twitterHook->post("statuses/update", array(
+  "status" => "You would not believe how I posted this tweet.",
+));
 
 ```
