@@ -2,7 +2,7 @@
 
 namespace TwitterHook;
 
-class Clearner
+class Cleaner
 {
   /**
    * Transform text URLs, mentions,
