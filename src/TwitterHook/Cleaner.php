@@ -9,7 +9,7 @@ class Cleaner
    * and hastags into links.
    * @param string $text Tweet text
    */
-  protected function cleanText($text)
+  public function cleanText($text)
 	{
 		$text = $this->link($text);
 		$text = $this->hashTag($text);
