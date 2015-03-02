@@ -33,7 +33,7 @@ class Cleaner
 
 	protected function hashTag($text)
 	{
-		return preg_replace("/(^|[^&\w'\"]+)\#([a-zA-Z0-9_^\"^<]+)/", "$1<a target='_newtab' href='http://search.twitter.com/search?q=%23$2'>#$2</a>", $text);
+		return preg_replace("/(^|[^&\w'\"]+)\#([a-zA-Z0-9_^\"^<]+)/", "$1<a target='_newtab' href='http://twitter.com/search?q=%23$2'>#$2</a>", $text);
 	}
 
 }
