@@ -7,33 +7,57 @@ class Cleaner
   /**
    * Transform text URLs, mentions,
    * and hastags into links.
-   * @param string $text Tweet text
+   * @param string  $text Tweet text
+   * @param integer $maxUrlLength Maximum number of characters a link can be
    */
-  public function cleanText($text)
+  public function cleanText($tweet, $maxUrlLength = null)
 	{
-		$text = $this->link($text);
-		$text = $this->hashTag($text);
-		$text = $this->mention($text);
+		$tweet = $this->link($tweet, $maxUrlLength);
+		$tweet = $this->hashTag($tweet);
+		$tweet = $this->mention($tweet);
 
-		return $text;
+		return $tweet;
 	}
 
-	protected function link($text)
+  protected function shortenUrl($url, $max)
+  {
+    // remove http:// or https://
+    $url = preg_replace("/(http|https):\/\//", "", $url);
+
+    // shorten, if necessary
+    if ($max) {
+      $max = $max - 3; // account for ...
+      $url = substr($url, 0, $max) . "...";
+    }
+
+    return $url;
+
+  }
+
+	protected function link($tweet, $maxLength)
 	{
-		return preg_replace_callback("/[a-z]+:\/\/([a-z0-9-_]+\.[a-z0-9-_:~\+#%&\?\/.=]+[^:\.,\)\s*$])/i", function($matches) {
-			$displayURL = strlen($matches[0]) > 36 ? substr($matches[0], 0, 35) . "&hellip;" : $matches[0];
-			return "<a target='_newtab' href='$matches[0]'>$displayURL</a>";
-		}, $text);
+    foreach ($tweet->entities->urls as $url) {
+
+      $short_url = $this->shortenUrl($url->url, $maxLength);
+      $replacement = "<a href='{$url->expanded_url}' title='{$url->expanded_url}'>{$short_url}</a>";
+
+      $tweet->text = substr_replace($tweet->text, $replacement, $url->indices[0], $url->indices[1]);
+
+    }
+
+    return $tweet;
 	}
 
-	protected function mention($text)
+	protected function mention($tweet)
 	{
-		return preg_replace("/(^|[^\w]+)\@([a-zA-Z0-9_]{1,15}(\/[a-zA-Z0-9-_]+)*)/", "$1<a target='_newtab' href='http://twitter.com/$2'>@$2</a>", $text);
-	}
+    $tweet->text = preg_replace("/(^|[^\w]+)\@([a-zA-Z0-9_]{1,15}(\/[a-zA-Z0-9-_]+)*)/", "$1<a target='_newtab' href='http://twitter.com/$2'>@$2</a>", $tweet->text);
+    return $tweet;
+  }
 
-	protected function hashTag($text)
+	protected function hashTag($tweet)
 	{
-		return preg_replace("/(^|[^&\w'\"]+)\#([a-zA-Z0-9_^\"^<]+)/", "$1<a target='_newtab' href='http://twitter.com/search?q=%23$2'>#$2</a>", $text);
-	}
+    $tweet->text = preg_replace("/(^|[^&\w'\"]+)\#([a-zA-Z0-9_^\"^<]+)/", "$1<a target='_newtab' href='http://twitter.com/search?q=%23$2'>#$2</a>", $tweet->text);
+    return $tweet;
+  }
 
 }
