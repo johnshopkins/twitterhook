@@ -5,19 +5,27 @@ namespace TwitterHook;
 class Cleaner
 {
   /**
-   * Transform text URLs, mentions,
-   * and hastags into links.
+   * Transform text URLs, mentions, and hastags into links.
+   * Converts tweet text to UTF-8.
    * @param string  $text Tweet text
    * @param integer $maxUrlLength Maximum number of characters a link can be
    */
   public function cleanText($tweet, $maxUrlLength = null)
 	{
+		$tweet = $this->utf8Text($tweet);
 		$tweet = $this->link($tweet, $maxUrlLength);
 		$tweet = $this->hashTag($tweet);
 		$tweet = $this->mention($tweet);
 
 		return $tweet;
 	}
+
+  protected function utf8Text($tweet)
+  {
+    $tweet->text = htmlentities($tweet->text, ENT_QUOTES, "utf-8", FALSE);
+
+    return $tweet;
+  }
 
   protected function shortenUrl($url, $max)
   {
