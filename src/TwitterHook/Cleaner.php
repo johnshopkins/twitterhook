@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Replacing text with links causes the length of the
+ * tweet to increase, making entities no longer relevant
+ *
+ * http://stackoverflow.com/questions/11533214/php-how-to-use-the-twitter-apis-data-to-convert-urls-mentions-and-hastags-in
+ */
 namespace TwitterHook;
 
 class Cleaner
@@ -12,21 +18,97 @@ class Cleaner
    */
   public function cleanText($tweet, $maxUrlLength = null)
 	{
-		$tweet = $this->utf8Text($tweet);
-		$tweet = $this->link($tweet, $maxUrlLength);
-		$tweet = $this->hashTag($tweet);
-		$tweet = $this->mention($tweet);
-
+    $tweet = $this->entities($tweet, $maxUrlLength);
 		return $tweet;
 	}
 
-  protected function utf8Text($tweet)
-  {
-    $tweet->text = htmlentities($tweet->text, ENT_QUOTES, "utf-8", FALSE);
+  /**
+   * Links user mentions, hashtags and links
+   * in a tweet and shortend URLs if requested.
+   *
+   * Adapted from: http://stackoverflow.com/a/15306910
+   *
+   * @param  object  $tweet        Tweet object
+   * @param  integer $maxUrlLength [description]
+   * @return [type]               [description]
+   */
+  function entities($tweet, $maxUrlLength) {
+
+    // convert tweet text to array of one-character strings
+    $chars = preg_split("//u", $tweet->text, null, PREG_SPLIT_NO_EMPTY);
+
+    $chars = $this->convertEntityToLink("hashtags", $tweet->entities, $chars);
+    $chars = $this->convertEntityToLink("user_mentions", $tweet->entities, $chars);
+    $chars = $this->convertEntityToLink("urls", $tweet->entities, $chars, $maxUrlLength);
+
+    // convert array back to string
+    $tweet->text = implode("", $chars);
 
     return $tweet;
+
   }
 
+  protected function convertEntityToLink($type, $entities, $chars, $max = null)
+  {
+    foreach ($entities->$type as $entity) {
+
+      $link = $this->getLink($type, $entity, $max);
+      $displayText = $chars[$entity->indices[0]];
+
+      $firstIndex = $entity->indices[0];
+      $lastIndex = $entity->indices[1];
+
+      if ($max) {
+
+        // created shortened URL
+        $displayText = $this->shortenUrl($entity->display_url, $max);
+
+        // add full link to first index
+        $chars[$firstIndex] = "<a href=\"$link\">{$displayText}</a>";
+
+        // remove characters from the rest of the indecies
+
+        $from = $firstIndex + 1;
+        $to = $lastIndex - 1;
+
+        for ($i = $from; $i <= $to; $i++) {
+          $chars[$i] = "";
+        }
+
+      } else {
+
+        // add opening <a> to the first index. will look something like this: <a href="http://...">t
+        $chars[$firstIndex] = "<a href=\"$link\">" . $displayText;
+
+        // the rest of the link display text is here...
+
+        // add closing <a> to the last index. will look something like this: t</a>
+        $chars[$lastIndex - 1] .= "</a>";
+
+      }
+
+    }
+
+    return $chars;
+  }
+
+  protected function getLink($type, $entity, $max = null)
+  {
+    if ($type == "hashtags") {
+      return "https://twitter.com/search?q=%23" . $entity->text;
+    } else if ($type == "user_mentions") {
+      return "https://twitter.com/" . $entity->screen_name;
+    } else if ($type == "urls") {
+      return $entity->expanded_url;
+    }
+  }
+
+  /**
+   * Shorten a URL to given character length
+   * @param  string  $url URL
+   * @param  integer $max Maximum character length
+   * @return string       Shortened URL
+   */
   protected function shortenUrl($url, $max)
   {
     // remove http:// or https://
@@ -40,32 +122,6 @@ class Cleaner
 
     return $url;
 
-  }
-
-	protected function link($tweet, $maxLength)
-	{
-    foreach ($tweet->entities->urls as $url) {
-
-      $short_url = $this->shortenUrl($url->url, $maxLength);
-      $replacement = "<a href='{$url->expanded_url}' title='{$url->expanded_url}'>{$short_url}</a>";
-
-      $tweet->text = substr_replace($tweet->text, $replacement, $url->indices[0], $url->indices[1]);
-
-    }
-
-    return $tweet;
-	}
-
-	protected function mention($tweet)
-	{
-    $tweet->text = preg_replace("/(^|[^\w]+)\@([a-zA-Z0-9_]{1,15}(\/[a-zA-Z0-9-_]+)*)/", "$1<a target='_newtab' href='http://twitter.com/$2'>@$2</a>", $tweet->text);
-    return $tweet;
-  }
-
-	protected function hashTag($tweet)
-	{
-    $tweet->text = preg_replace("/(^|[^&\w'\"]+)\#([a-zA-Z0-9_^\"^<]+)/", "$1<a target='_newtab' href='http://twitter.com/search?q=%23$2'>#$2</a>", $tweet->text);
-    return $tweet;
   }
 
 }
