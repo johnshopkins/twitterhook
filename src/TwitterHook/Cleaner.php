@@ -58,10 +58,10 @@ class Cleaner
       $firstIndex = $entity->indices[0];
       $lastIndex = $entity->indices[1];
 
-      if ($max) {
+      if ($type == "urls" && $max) {
 
         // created shortened URL
-        $displayText = $this->shortenUrl($entity->display_url, $max);
+        $displayText = $this->shortenUrl($entity->url, $max);
 
         // add full link to first index
         $chars[$firstIndex] = "<a href=\"$link\">{$displayText}</a>";
