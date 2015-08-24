@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Replacing text with links causes the length of the
- * tweet to increase, making entities no longer relevant
- *
- * http://stackoverflow.com/questions/11533214/php-how-to-use-the-twitter-apis-data-to-convert-urls-mentions-and-hastags-in
- */
 namespace TwitterHook;
 
 class Cleaner
