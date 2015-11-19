@@ -44,6 +44,8 @@ class Cleaner
 
   protected function convertEntityToLink($type, $entities, $chars, $max = null)
   {
+    if (!isset($entities->$type) || !is_array($entities->$type)) return;
+    
     foreach ($entities->$type as $entity) {
 
       $link = $this->getLink($type, $entity, $max);
