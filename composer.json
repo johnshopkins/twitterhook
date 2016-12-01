@@ -1,5 +1,5 @@
 {
-    "name": "jenwachter/twitterhook",
+    "name": "johnshopkins/twitterhook",
     "description": "A PHP library to interact with the GET and POST methods of the Twitter API using single user sign-on OAuth authentication. Adapted from @abraham's twitteroauth.",
     "keywords": ["twitter", "oauth", "twitter api", "twitter oauth"],
     "homepage": "http://github.com/johnshopkins/twitterhook",
